@@ -1,5 +1,4 @@
 ﻿local E, L, V, P, G = unpack(ElvUI);
-local AddOnName, Engine = ...
 
 local DT = E:GetModule('DataTexts')
 local DB = E:NewModule('DTBars2', 'AceTimer-3.0', 'AceHook-3.0', 'AceEvent-3.0')
@@ -166,7 +165,7 @@ function DT:GetDataPanelPoint(panel, i, numPoints)
 	elseif numPoints == 2 then
 		if i == 1 then
 			return (vert and "TOP" or 'LEFT'), panel, (vert and "TOP" or 'LEFT'), vert and 0 or 4, vert and -4 or 0
-		elseif i == 2 then 
+		elseif i == 2 then
 			return (vert and "BOTTOM" or 'RIGHT'), panel, (vert and "BOTTOM" or 'RIGHT'), vert and 0 or -4, vert and 4 or 0
 		end
 	elseif numPoints == 3 then
@@ -275,7 +274,7 @@ function DB:ProfileHandle(name, data)
 	if E.db.dtbars and not E.db.dtbars[name] then E.db.dtbars[name] = tcopy(DB.DefaultPanel) end
 	if E.db.dtbars[name] and not E.db.dtbars[name].height then E.db.dtbars[name].height = 22 end
 	if data.slots == 1 then
-		if not P.datatexts.panels[name] then 
+		if not P.datatexts.panels[name] then
 			P.datatexts.panels[name] = ""
 		end
 		if not E.db.datatexts.panels[name] then E.db.datatexts.panels[name] = "" end
@@ -349,7 +348,7 @@ function DB:InsertPanel(name, slots, growth, width, transparent, anchor, point, 
 		--insert profile based data of the panel to every existing profile
 		for profile, data in pairs(ElvDB.profiles) do
 			if not data.dtbars then data.dtbars = {} end
-			if not data.dtbars[name] then 
+			if not data.dtbars[name] then
 				data.dtbars[name] = {
 					['enable'] = true,
 					['growth'] = growth,
@@ -415,7 +414,7 @@ function DB:ExtraDataBarSetup()
 					_G[name]:SetTemplate("Default", true)
 				end
 			end
-			
+
 		end
 	end
 end
@@ -450,7 +449,7 @@ function DB:CreateFrames()
 			local db = E.db.dtbars[name]
 			local bar = CreateFrame("Frame", name, E.UIParent)
 			bar:SetFrameStrata(data.strata)
-			bar:Point(data.anchor, E.UIParent, data.point, data.x, data.y); 
+			bar:Point(data.anchor, E.UIParent, data.point, data.x, data.y);
 			DT:RegisterPanel(bar, data.slots, 'ANCHOR_BOTTOM', 0, -4)
 			bar.Name = name
 			bar:Hide()
@@ -478,7 +477,7 @@ function DB:Initialize()
 	DB:ExtraDataBarSetup()
 	DB:MouseOver()
 	hooksecurefunc(E, "UpdateAll", DB.Update)
-	LibStub("LibElvUIPlugin-1.0"):RegisterPlugin(AddOnName, DB.GetOptions)
+	LibStub("LibElvUIPlugin-1.0"):RegisterPlugin("ElvUI_DTBars", DB.GetOptions)
 end
 
 E:RegisterModule(DB:GetName())
