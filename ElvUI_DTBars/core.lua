@@ -480,4 +480,8 @@ function DB:Initialize()
 	LibStub("LibElvUIPlugin-1.0"):RegisterPlugin("ElvUI_DTBars", DB.GetOptions)
 end
 
-E:RegisterModule(DB:GetName())
+local function InitializeCallback()
+	DB:Initialize()
+end
+
+E:RegisterModule(DB:GetName(), InitializeCallback)
