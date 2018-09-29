@@ -1,5 +1,5 @@
 ﻿## Interface: 20400
-## Title: |cffA11313E|r|cffC4C4C4lvUI|r |cffA11313D|r|cffC4C4C4ata|r|cffA11313T|r|cffC4C4C4ext|r |cffA11313B|r|cffC4C4C4ars|r
+## Title: |cff00b30bE|r|cffC4C4C4lvUI|r |cff00b30bD|r|cffC4C4C4ata|r|cff00b30bT|r|cffC4C4C4ext|r |cff00b30bB|r|cffC4C4C4ars|r
 ## Author: |cff9482c9Darth Predator|r
 ## Version: 7.0.3.0010
 ## Notes: The plugin to create and manage additional datatext panels.
@@ -7,6 +7,6 @@
 ## RequiredDeps: ElvUI
 ## DefaultState: Enabled
 
-locales\load_locales.xml
-core.lua
-options.lua
+Locales\Load_Locales.xml
+ElvUI_DataTextBars.lua
+Config\Load_Config.xml

@@ -1,16 +1,16 @@
 ﻿local E, L, V, P, G = unpack(ElvUI)
-
 local DT = E:GetModule("DataTexts")
 local DB = E:NewModule("DTBars2", "AceTimer-3.0", "AceHook-3.0", "AceEvent-3.0")
+local addonName = "ElvUI_DataTextBars"
 
---cache
---GLOBALS: CreateFrame, hooksecurefunc, LibStub, ElvDB
 local _G = _G
-local ACCEPT, CANCEL = ACCEPT, CANCEL
-local pairs, tinsert, type, error, format, collectgarbage = pairs, tinsert, type, error, format, collectgarbage
-local tcopy = table.copy
+local pairs, type, error, collectgarbage = pairs, type, error, collectgarbage
+local tinsert, tcopy = tinsert, table.copy
+local format = string.format
+
 local IsInInstance = IsInInstance
 local ReloadUI = ReloadUI
+local ACCEPT, CANCEL = ACCEPT, CANCEL
 
 P["dtbars"] = {}
 G["dtbars"] = {}
@@ -29,6 +29,7 @@ G["dtbarsSetup"] = {
 	["transparent"] = false,
 	["hide"] = false,
 	["mouseover"] = false,
+	["combatHide"] = false,
 }
 
 --Rearranging pointLoc indexes cause 2 point DT panel looks weird with point being called "middle"
@@ -47,8 +48,8 @@ DB.DefaultPanel = {
 	["height"] = 22,
 	["transparent"] = false,
 	["mouseover"] = false,
+	["combatHide"] = false,
 }
-
 
 E.PopupDialogs["DT_Slot_Changed"] = {
 	button1 = ACCEPT,
@@ -112,7 +113,7 @@ function DT:RegisterPanel(panel, numPoints, anchor, xOff, yOff)
 	panel.xOff = xOff
 	panel.yOff = yOff
 	panel.anchor = anchor
-	for i=1, numPoints do
+	for i = 1, numPoints do
 		local newI
 		if numPoints == 4 and i == 3 then newI = 5 end
 		local pointIndex = newI and DT.PointLocation[newI] or DT.PointLocation[i]
@@ -142,7 +143,7 @@ function DT:UpdateAllDimensions()
 		end
 		local width = (vert and panel:GetWidth() or ( panel:GetWidth()/ panel.numPoints)) - 4
 		local height = (vert and (panel:GetHeight()/panel.numPoints) or panel:GetHeight()) - 4
-		for i=1, panel.numPoints do
+		for i = 1, panel.numPoints do
 			local newI
 			if panel.numPoints == 4 and i == 3 then newI = 5 end
 			local pointIndex = newI and DT.PointLocation[newI] or DT.PointLocation[i]
@@ -419,6 +420,21 @@ function DB:ExtraDataBarSetup()
 	end
 end
 
+function DB:OnEvent(event, unit)
+	if unit and unit ~= "player" then return end
+	local inCombat = (event == "PLAYER_REGEN_DISABLED" and true) or (event == "PLAYER_REGEN_ENABLED" and false) or InCombatLockdown()
+	for name, _ in pairs(E.global.dtbars) do
+		if name then
+			local db = E.db.dtbars[name]
+			if inCombat and db.combatHide then
+				_G[name]:Hide()
+			else
+				_G[name]:Show()
+			end
+		end
+	end
+end
+
 function DB:MoverCreation()
 	if not E.db.dtbars then E.db.dtbars = {} end
 	for name, data in pairs(E.global.dtbars) do
@@ -477,7 +493,9 @@ function DB:Initialize()
 	DB:ExtraDataBarSetup()
 	DB:MouseOver()
 	hooksecurefunc(E, "UpdateAll", DB.Update)
-	LibStub("LibElvUIPlugin-1.0"):RegisterPlugin("ElvUI_DTBars", DB.GetOptions)
+	DB:RegisterEvent("PLAYER_REGEN_DISABLED", "OnEvent")
+	DB:RegisterEvent("PLAYER_REGEN_ENABLED", "OnEvent")
+	LibStub("LibElvUIPlugin-1.0"):RegisterPlugin(addonName, DB.GetOptions)
 end
 
 local function InitializeCallback()
